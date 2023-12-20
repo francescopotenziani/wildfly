@@ -1,17 +1,6 @@
 /*
- * Copyright 2023 Red Hat, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 package org.wildfly.test.integration.microprofile.faulttolerance.micrometer;
 
@@ -33,10 +22,12 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.as.test.integration.common.HttpRequest;
+import org.jboss.as.test.shared.IntermittentFailure;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.test.integration.microprofile.faulttolerance.micrometer.deployment.FaultTolerantApplication;
@@ -52,7 +43,13 @@ import org.wildfly.test.integration.observability.micrometer.MicrometerSetupTask
 @ServerSetup(MicrometerSetupTask.class)
 public class FaultToleranceMicrometerIntegrationTestCase {
 
-    private static final int INVOCATION_COUNT = 2;
+    @BeforeClass
+    public static void beforeClass() {
+        IntermittentFailure.thisTestIsFailingIntermittently("WFLY-18080 Regular failures of FaultToleranceMicrometerIntegrationTestCase");
+    }
+
+    // Let's use a slightly higher number of invocations, so we can at times differentiate between stale read and or other problems
+    private static final int INVOCATION_COUNT = 10;
 
     @Deployment
     public static Archive<?> deploy() {

@@ -1,23 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2023, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package org.wildfly.test.integration.elytron.oidc.client.propagation;
@@ -28,9 +11,8 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.as.controller.operations.common.Util.createAddOperation;
-import static org.jboss.as.controller.operations.common.Util.getUndefineAttributeOperation;
 import static org.jboss.as.test.integration.management.util.ModelUtil.createOpNode;
-import static org.jboss.as.test.shared.integration.ejb.security.PermissionUtils.createPermissionsXmlAsset;
+import static org.jboss.as.test.shared.PermissionUtils.createPermissionsXmlAsset;
 import static org.junit.Assume.assumeTrue;
 import static org.wildfly.test.integration.elytron.oidc.client.KeycloakConfiguration.getRealmRepresentation;
 import static org.wildfly.test.integration.elytron.oidc.client.OidcBaseTest.KEYCLOAK_CONTAINER;
@@ -72,7 +54,6 @@ import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.testcontainers.DockerClientFactory;
@@ -110,7 +91,6 @@ import io.restassured.RestAssured;
  *
  * @author <a href="mailto:fjuma@redhat.com">Farah Juma</a>
  */
-@Ignore("WFLY-17849")
 @RunWith(Arquillian.class)
 @RunAsClient
 @ServerSetup({ OidcIdentityPropagationTestCase.EJBDomainSetupOverride.class, OidcIdentityPropagationTestCase.AnotherEJBDomainSetupOverride.class, OidcIdentityPropagationTestCase.PropagationSetup.class, OidcIdentityPropagationTestCase.KeycloakAndSubsystemSetup.class })
@@ -737,9 +717,10 @@ public class OidcIdentityPropagationTestCase {
             updates.add(getAddEjbApplicationSecurityDomainOp(EJB_SECURITY_DOMAIN_NAME, EJB_SECURITY_DOMAIN_NAME));
             updates.add(getAddEjbApplicationSecurityDomainOp(ANOTHER_EJB_SECURITY_DOMAIN_NAME, ANOTHER_EJB_SECURITY_DOMAIN_NAME));
 
-            // /subsystem=elytron/virtual-security-domain=APP_NAME:add(outflow-security-domains=["ejb-domain", "another-ejb-domain"])
+            // /subsystem=elytron/virtual-security-domain=APP_NAME:add(outflow-security-domains=["ejb-domain"])
+            // /subsystem=elytron/virtual-security-domain=another-single-deployment-local:add(outflow-security-domains=["another-ejb-domain"])
             for (String app : APP_NAMES) {
-                updates.add(getAddVirtualSecurityDomainOp(app, EJB_SECURITY_DOMAIN_NAME, ANOTHER_EJB_SECURITY_DOMAIN_NAME));
+                updates.add(getAddVirtualSecurityDomainOp(app, app.equals(ANOTHER_SINGLE_DEPLOYMENT_LOCAL) ? ANOTHER_EJB_SECURITY_DOMAIN_NAME : EJB_SECURITY_DOMAIN_NAME));
             }
 
             // /subsystem=elytron/virtual-security-domain=outflow-anonymous-config.ear:write-attribute(name=outflow-anonymous, value=true)
@@ -772,8 +753,6 @@ public class OidcIdentityPropagationTestCase {
         @Override
         public void tearDown(final ManagementClient managementClient, final String containerId) throws Exception {
             final List<ModelNode> updates = new ArrayList<>();
-
-            updates.add(getUndefineAttributeOperation(PathAddress.pathAddress("subsystem", "elytron").append("security-domain", EJB_SECURITY_DOMAIN_NAME), "trusted-virtual-security-domains"));
 
             ModelNode op = ModelUtil.createOpNode(
                     "subsystem=ejb3/application-security-domain=" + EJB_SECURITY_DOMAIN_NAME, REMOVE);
@@ -882,13 +861,14 @@ public class OidcIdentityPropagationTestCase {
                 .append("virtual-security-domain", virtualSecurityDomainName + ".ear");
     }
 
-    private static ModelNode getAddVirtualSecurityDomainOp(String virtualSecurityDomainName, String outflowSecurityDomain, String anotherOutflowSecurityDomain) {
+    private static ModelNode getAddVirtualSecurityDomainOp(String virtualSecurityDomainName, String... outflowDomains) {
         ModelNode op = createAddOperation(getVirtualSecurityDomainAddress(virtualSecurityDomainName));
         if (! virtualSecurityDomainName.equals(EAR_DEPLOYMENT_WITH_SERVLET_AND_EJB_REMOTE_SAME_DOMAIN)) {
-            ModelNode outflowDomains = new ModelNode();
-            outflowDomains.add(outflowSecurityDomain);
-            outflowDomains.add(anotherOutflowSecurityDomain);
-            op.get("outflow-security-domains").set(outflowDomains);
+            ModelNode outflowSecurityDomains = new ModelNode();
+            for (String outflowSecurityDomain : outflowDomains) {
+                outflowSecurityDomains.add(outflowSecurityDomain);
+            }
+            op.get("outflow-security-domains").set(outflowSecurityDomains);
         }
         return op;
     }

@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ /*
-  ~  * JBoss, Home of Professional Open Source.
-  ~  * Copyright $year Red Hat, Inc., and individual contributors
-  ~  * as indicated by the @author tags.
-  ~  *
-  ~  * Licensed under the Apache License, Version 2.0 (the "License");
-  ~  * you may not use this file except in compliance with the License.
-  ~  * You may obtain a copy of the License at
-  ~  *
-  ~  *     http://www.apache.org/licenses/LICENSE-2.0
-  ~  *
-  ~  * Unless required by applicable law or agreed to in writing, software
-  ~  * distributed under the License is distributed on an "AS IS" BASIS,
-  ~  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~  * See the License for the specific language governing permissions and
-  ~  * limitations under the License.
-  ~  */
+  ~ Copyright The WildFly Authors
+  ~ SPDX-License-Identifier: Apache-2.0
   -->
 
 <feature-group-spec name="ee-concurrency" xmlns="urn:jboss:galleon:feature-group:1.0">
@@ -24,7 +9,6 @@
         <feature spec="subsystem.ee.context-service">
             <param name="context-service" value="default"/>
             <param name="jndi-name" value="java:jboss/ee/concurrency/context/default"/>
-            <param name="use-transaction-setup-provider" value="false"/>
         </feature>
         <feature spec="subsystem.ee.managed-executor-service">
             <param name="managed-executor-service" value="default"/>

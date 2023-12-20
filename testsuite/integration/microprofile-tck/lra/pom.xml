@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2023, Red Hat, Inc., and individual contributors
-  ~ as indicated by the @author tags. See the copyright.txt file in the
-  ~ distribution for a full listing of individual contributors.
-  ~
-  ~ This is free software; you can redistribute it and/or modify it
-  ~ under the terms of the GNU Lesser General Public License as
-  ~ published by the Free Software Foundation; either version 2.1 of
-  ~ the License, or (at your option) any later version.
-  ~
-  ~ This software is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  ~ Lesser General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU Lesser General Public
-  ~ License along with this software; if not, write to the Free
-  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~ Copyright The WildFly Authors
+  ~ SPDX-License-Identifier: Apache-2.0
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -32,7 +15,11 @@
         Maintain separation between the artifact id and the version to help prevent
         merge conflicts between commits changing the GA and those changing the V.
         -->
+<<<<<<< HEAD
         <version>28.0.2.Final-SNAPSHOT</version>
+=======
+        <version>30.0.2.Final-SNAPSHOT</version>
+>>>>>>> d130fbcc06cb30c789017579c660d3889e0686d8
     </parent>
 
     <artifactId>wildfly-ts-integ-mp-lra</artifactId>
@@ -46,12 +33,10 @@
         <ts.microprofile-tck-provisioning.base.layer>datasources-web-server</ts.microprofile-tck-provisioning.base.layer>
         <ts.microprofile-tck-provisioning.decorator.layer>microprofile-lra</ts.microprofile-tck-provisioning.decorator.layer>
 
-        <version.org.jboss.shrinkwrap.resolvers>3.1.4</version.org.jboss.shrinkwrap.resolvers>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jbossas.ts.integ.dir>${basedir}/../..</jbossas.ts.integ.dir>
         <jbossas.ts.dir>${jbossas.ts.integ.dir}/..</jbossas.ts.dir>
         <jbossas.project.dir>${jbossas.ts.dir}/..</jbossas.project.dir>
-        <ts.elytron.cli>${jbossas.ts.dir}/shared/enable-elytron.cli</ts.elytron.cli>
         <wildfly.build.output.dir>build/target/${server.output.dir.prefix}-${server.output.dir.version}</wildfly.build.output.dir>
         <ts.copy-wildfly.phase>none</ts.copy-wildfly.phase>
         <ts.microprofile-tck-provisioning.phase>compile</ts.microprofile-tck-provisioning.phase>
@@ -98,6 +83,11 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.config</groupId>
+            <artifactId>smallrye-config</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -156,10 +146,9 @@
                             </plugin-options>
                             <feature-packs>
                                 <feature-pack>
-                                    <!-- Child modules can set properties to override what feature pack is used -->
-                                    <groupId>${ts.microprofile-tck-provisioning.fp.groupId}</groupId>
-                                    <artifactId>${ts.microprofile-tck-provisioning.fp.artifactId}</artifactId>
-                                    <version>${ts.microprofile-tck-provisioning.fp.version}</version>
+                                    <groupId>${testsuite.full.galleon.pack.groupId}</groupId>
+                                    <artifactId>${testsuite.full.galleon.pack.artifactId}</artifactId>
+                                    <version>${testsuite.full.galleon.pack.version}</version>
                                     <inherit-configs>false</inherit-configs>
                                     <inherit-packages>false</inherit-packages>
                                 </feature-pack>
@@ -205,10 +194,9 @@
                             </plugin-options>
                             <feature-packs>
                                 <feature-pack>
-                                    <!-- Child modules can set properties to override what feature pack is used -->
-                                    <groupId>${ts.microprofile-tck-provisioning.fp.groupId}</groupId>
-                                    <artifactId>${ts.microprofile-tck-provisioning.fp.artifactId}</artifactId>
-                                    <version>${ts.microprofile-tck-provisioning.fp.version}</version>
+                                    <groupId>${testsuite.full.galleon.pack.groupId}</groupId>
+                                    <artifactId>${testsuite.full.galleon.pack.artifactId}</artifactId>
+                                    <version>${testsuite.full.galleon.pack.version}</version>
                                 </feature-pack>
                             </feature-packs>
                             <layers>
@@ -253,10 +241,10 @@
         </profile>
 
          <profile>
-            <id>bootablejar.ee9.profile</id>
+            <id>bootablejar.preview.profile</id>
             <activation>
                 <property>
-                    <name>ts.bootable.ee9</name>
+                    <name>ts.bootable.preview</name>
                 </property>
             </activation>
             <properties>
@@ -266,10 +254,10 @@
         </profile>
 
         <profile>
-            <id>ee9.test.profile</id>
+            <id>preview.test.profile</id>
             <activation>
                 <property>
-                    <name>ts.ee9</name>
+                    <name>ts.preview</name>
                 </property>
             </activation>
             <properties>

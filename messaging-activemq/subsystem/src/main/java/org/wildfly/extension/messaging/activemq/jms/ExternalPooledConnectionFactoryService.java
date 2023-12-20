@@ -1,17 +1,6 @@
 /*
- * Copyright 2018 Red Hat, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 package org.wildfly.extension.messaging.activemq.jms;
 
@@ -396,6 +385,10 @@ public class ExternalPooledConnectionFactoryService implements Service<ExternalP
                 if (tc == null) {
                     throw MessagingLogger.ROOT_LOGGER.connectorNotDefined("null");
                 }
+                if (connectorClassname.length() > 0) {
+                    connectorClassname.append(",");
+                    connectorParams.append(",");
+                }
                 connectorClassname.append(tc.getFactoryClassName());
                 Map<String, Object> params = tc.getParams();
                 boolean multiple = false;
@@ -594,10 +587,10 @@ public class ExternalPooledConnectionFactoryService implements Service<ExternalP
         //   <application />
         // </security>
         // => PoolStrategy.POOL_BY_CRI
-        Security security = new SecurityImpl(null, null, true, false);
+        Security security = new SecurityImpl(null, null, true);
         // register the XA Connection *without* recovery. ActiveMQ already takes care of the registration with the correct credentials
         // when its ResourceAdapter is started
-        Recovery recovery = new Recovery(new CredentialImpl(null, null, null, false, null), null, Boolean.TRUE);
+        Recovery recovery = new Recovery(new CredentialImpl(null, null, null, null), null, Boolean.TRUE);
         Validation validation = new ValidationImpl(Defaults.VALIDATE_ON_MATCH, null, null, false);
         // do no track
         return new ConnectionDefinitionImpl(Collections.<String, String>emptyMap(), RAMANAGED_CONN_FACTORY, jndiName, ACTIVEMQ_CONN_DEF, true, true, true, Defaults.SHARABLE, Defaults.ENLISTMENT, Defaults.CONNECTABLE, false, managedConnectionPoolClassName, enlistmentTrace, pool, timeOut, validation, security, recovery, isXA);

@@ -1,23 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2018, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package org.wildfly.extension.clustering.web.deployment;
@@ -67,6 +50,7 @@ public class DistributableWebDeploymentXMLReader implements XMLElementReader<Mut
     private static final String DELIMITER = "delimiter";
     private static final String MAX_ROUTES = "max-routes";
     private static final String IMMUTABLE_CLASS = "immutable-class";
+    private static final String EXPIRATION_THREAD_POOL_SIZE = "expiration-thread-pool-size";
 
     private final DistributableWebDeploymentSchema schema;
 
@@ -252,6 +236,12 @@ public class DistributableWebDeploymentXMLReader implements XMLElementReader<Mut
                 case CACHE_CONFIGURATION: {
                     configuration.setConfigurationName(value);
                     break;
+                }
+                case EXPIRATION_THREAD_POOL_SIZE: {
+                    if (this.schema.since(DistributableWebDeploymentSchema.VERSION_4_0)) {
+                        configuration.setExpirationThreadPoolSize(Integer.parseInt(value));
+                        break;
+                    }
                 }
                 default: {
                     this.readSessionManagementAttribute(reader, i, configuration);

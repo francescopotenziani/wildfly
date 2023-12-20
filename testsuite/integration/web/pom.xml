@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright The WildFly Authors
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -11,7 +16,11 @@
         Maintain separation between the artifact id and the version to help prevent
         merge conflicts between commits changing the GA and those changing the V.
         -->
+<<<<<<< HEAD
         <version>28.0.2.Final-SNAPSHOT</version>
+=======
+        <version>30.0.2.Final-SNAPSHOT</version>
+>>>>>>> d130fbcc06cb30c789017579c660d3889e0686d8
     </parent>
 
     <!-- ********************************************************************************** -->
@@ -164,12 +173,6 @@
         <dependency>
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-core-testsuite-shared</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>xom</groupId>
-            <artifactId>xom</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -906,6 +909,8 @@
                                         <include>org/jboss/as/test/integration/web/handlers/RequestDumpingHandlerTestCase.java</include>
                                         <!-- TODO this has special setup logic for -Delytron vs not; needs a variant for this test setup
                                              where elytron is configured but -Delytron is not set. -->
+										<!-- TODO this works with ts.bootable with the same set of layers so it's not clear why it doesn't 
+										     work with ts.layers -->
                                         <!--include>org/jboss/as/test/integration/web/security/**/TransportGuaranteeTestCase.java</include-->
                                     </includes>
                                     <reportNameSuffix>legacy-https-layers.surefire</reportNameSuffix>
@@ -1120,9 +1125,7 @@
                                     </systemPropertyVariables>
                                     <includes>
                                         <include>org/jboss/as/test/integration/web/handlers/RequestDumpingHandlerTestCase.java</include>
-                                        <!-- TODO this has special setup logic for -Delytron vs not; needs a variant for this test setup
-                                             where elytron is configured but -Delytron is not set. -->
-                                        <!--include>org/jboss/as/test/integration/web/security/**/TransportGuaranteeTestCase.java</include-->
+                                        <include>org/jboss/as/test/integration/web/security/**/TransportGuaranteeTestCase.java</include>
                                     </includes>
                                     <classpathDependencyExcludes>
                                         <classpathDependencyExclude>
@@ -1202,12 +1205,12 @@
             </build>
         </profile>
         
-        <!-- Test against bootable jar ee9 -->
+        <!-- Test against bootable jar WildFly Preview -->
         <profile>
-            <id>bootablejar.ee9.profile</id>
+            <id>bootablejar.preview.profile</id>
             <activation>
                 <property>
-                    <name>ts.bootable.ee9</name>
+                    <name>ts.bootable.preview</name>
                 </property>
             </activation>
             <dependencies>
@@ -1289,6 +1292,7 @@
                                         <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
                                     </systemPropertyVariables>
                                     <excludes>
+                                        <!--TODO re-evaluate these exclusions from EE 9 work-->
                                         <!-- requires legacy-security -->
                                         <exclude>org/jboss/as/test/integration/web/security/**/*TestCase.java</exclude>
                                         <!-- requires ee-concurrency -->
@@ -1325,9 +1329,7 @@
                                     </systemPropertyVariables>
                                     <includes>
                                         <include>org/jboss/as/test/integration/web/handlers/RequestDumpingHandlerTestCase.java</include>
-                                        <!-- TODO this has special setup logic for -Delytron vs not; needs a variant for this test setup
-                                             where elytron is configured but -Delytron is not set. -->
-                                        <!--include>org/jboss/as/test/integration/web/security/**/TransportGuaranteeTestCase.java</include-->
+                                        <include>org/jboss/as/test/integration/web/security/**/TransportGuaranteeTestCase.java</include>
                                     </includes>
                                     <classpathDependencyExcludes>
                                         <classpathDependencyExclude>
@@ -1352,6 +1354,7 @@
                                         <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
                                     </systemPropertyVariables>
                                     <excludes>
+                                        <!--TODO re-evaluate these exclusions from EE 9 work-->
                                         <!-- requires legacy-security -->
                                         <exclude>org/jboss/as/test/integration/web/security/**/*TestCase.java</exclude>
                                         <!-- requires ee-concurrency -->
@@ -1387,6 +1390,7 @@
                                         <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
                                     </systemPropertyVariables>
                                     <excludes>
+                                        <!--TODO re-evaluate these exclusions from EE 9 work-->
                                         <!-- requires legacy-security -->
                                         <exclude>org/jboss/as/test/integration/web/security/**/*TestCase.java</exclude>
                                         <!-- requires ee-concurrency -->
@@ -1413,12 +1417,12 @@
             </build>
         </profile>
 
-        <!-- Test against EE 9 dist -->
+        <!-- Test against WildFly Preview dist -->
         <profile>
-            <id>ee9.profile</id>
+            <id>preview.profile</id>
             <activation>
                 <property>
-                    <name>ts.ee9</name>
+                    <name>ts.preview</name>
                 </property>
             </activation>
             <build>
@@ -1433,7 +1437,7 @@
                                 <phase>test</phase>
                                 <configuration>
                                     <excludes>
-                                        <!-- TODO rework these to handle EE 9 -->
+                                        <!--TODO re-evaluate these exclusions from EE 9 work-->
                                         <exclude>org/jboss/as/test/integration/web/annotationsmodule/WebModuleDeploymentTestCase.java</exclude>
                                         <exclude>org/jboss/as/test/integration/web/jsp/taglib/external/ExternalTagLibTestCase.java</exclude>
                                     </excludes>

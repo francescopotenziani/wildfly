@@ -1,19 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2022 Red Hat, Inc., and individual contributors
- * as indicated by the @author tags.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package org.jboss.as.jpa.hibernate;
@@ -26,7 +13,6 @@ import jakarta.persistence.SharedCacheMode;
 import jakarta.persistence.spi.PersistenceUnitInfo;
 
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.type.WrapperArrayHandling;
 import org.jboss.as.jpa.hibernate.management.HibernateManagementAdaptor;
 import org.jboss.as.jpa.hibernate.service.WildFlyCustomJtaPlatform;
 import org.jipijapa.cache.spi.Classification;
@@ -93,11 +79,6 @@ public class HibernatePersistenceProviderAdaptor implements PersistenceProviderA
 
         // Enable JPA Compliance mode
         putPropertyIfAbsent( pu, properties, AvailableSettings.JPA_COMPLIANCE, true);
-
-        // WFLY-17881 default to legacy setting for
-        // https://docs.jboss.org/hibernate/orm/6.2/migration-guide/migration-guide.html#byte-and-character-array-mapping-changes
-        putPropertyIfAbsent(pu, properties, AvailableSettings.WRAPPER_ARRAY_HANDLING, WrapperArrayHandling.LEGACY);
-
     }
 
     private void failOnIncompatibleSetting(PersistenceUnitMetadata pu, Map properties) {

@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2010, Red Hat, Inc., and individual contributors
-  ~ as indicated by the @author tags. See the copyright.txt file in the
-  ~ distribution for a full listing of individual contributors.
-  ~
-  ~ This is free software; you can redistribute it and/or modify it
-  ~ under the terms of the GNU Lesser General Public License as
-  ~ published by the Free Software Foundation; either version 2.1 of
-  ~ the License, or (at your option) any later version.
-  ~
-  ~ This software is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  ~ Lesser General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU Lesser General Public
-  ~ License along with this software; if not, write to the Free
-  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~ Copyright The WildFly Authors
+  ~ SPDX-License-Identifier: Apache-2.0
   -->
 
 
@@ -58,7 +41,11 @@
         Maintain separation between the artifact id and the version to help prevent
         merge conflicts between commits changing the GA and those changing the V.
         -->
+<<<<<<< HEAD
         <version>28.0.2.Final-SNAPSHOT</version>
+=======
+        <version>30.0.2.Final-SNAPSHOT</version>
+>>>>>>> d130fbcc06cb30c789017579c660d3889e0686d8
     </parent>
 
     <artifactId>wildfly-testsuite</artifactId>
@@ -190,14 +177,14 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>${dependency.management.import.artifact}</artifactId>
-                <version>${ee.maven.version}</version>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.wildfly</groupId>
+                <groupId>${ee.maven.groupId}</groupId>
                 <artifactId>wildfly-standard-test-bom</artifactId>
-                <version>${project.version}</version>
+                <version>${ee.maven.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -437,12 +424,18 @@
             <modules><module>layers</module></modules>
         </profile>
         <profile>
+            <id>layers-expansion.module.profile</id>
+            <activation><property><name>layers-expansion.module</name></property></activation>
+            <modules><module>layers-expansion</module></modules>
+        </profile>
+        <profile>
             <id>layers_.module.profile</id>
             <activation><property><name>ts.layers</name></property></activation>
             <modules>
                 <module>integration</module>
                 <module>preview</module>
                 <module>layers</module>
+                <module>layers-expansion</module>
             </modules>
         </profile>
         <profile>
@@ -467,8 +460,8 @@
         </profile>
 
         <profile>
-            <id>ee9.profile</id>
-            <activation><property><name>ts.ee9</name></property></activation>
+            <id>preview.profile</id>
+            <activation><property><name>ts.preview</name></property></activation>
             <properties>
                 <dependency.management.import.artifact>wildfly-preview-expansion-bom</dependency.management.import.artifact>
             </properties>
@@ -477,15 +470,16 @@
                 <module>domain</module>
                 <module>integration</module>
                 <module>layers</module>
+                <module>layers-expansion</module>
                 <module>preview</module>
                 <module>scripts</module>
             </modules>
         </profile>
         <profile>
-            <id>bootablejar.ee9.profile</id>
+            <id>bootablejar.preview.profile</id>
             <activation>
                 <property>
-                    <name>ts.bootable.ee9</name>
+                    <name>ts.bootable.preview</name>
                 </property>
             </activation>
             <modules>

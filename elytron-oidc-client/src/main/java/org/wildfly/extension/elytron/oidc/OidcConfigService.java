@@ -1,35 +1,28 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2021 Red Hat, Inc., and individual contributors
- * as indicated by the @author tags.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package org.wildfly.extension.elytron.oidc;
 
+import static org.wildfly.extension.elytron.oidc.ElytronOidcDescriptionConstants.AUTH_SERVER_URL;
+import static org.wildfly.extension.elytron.oidc.ElytronOidcDescriptionConstants.CLIENT_ID;
+import static org.wildfly.extension.elytron.oidc.ElytronOidcDescriptionConstants.PROVIDER_URL;
+import static org.wildfly.extension.elytron.oidc.ElytronOidcDescriptionConstants.REALM;
+import static org.wildfly.extension.elytron.oidc.ElytronOidcDescriptionConstants.RESOURCE;
 import static org.wildfly.extension.elytron.oidc._private.ElytronOidcLogger.ROOT_LOGGER;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import org.jboss.as.controller.AttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.web.common.WarMetaData;
 import org.jboss.dmr.ModelNode;
-import org.jboss.dmr.Property;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
+import org.wildfly.security.http.oidc.Oidc;
 
 final class OidcConfigService {
 
@@ -192,8 +185,12 @@ final class OidcConfigService {
     }
 
     public String getJSON(String deploymentName) {
+        return getJSON(deploymentName, false);
+    }
+
+    public String getJSON(String deploymentName, boolean convertToRealmConfiguration) {
         ModelNode deployment = this.secureDeployments.get(deploymentName);
-        return getJSON(deployment);
+        return getJSON(deployment, convertToRealmConfiguration);
     }
 
     public void clear() {
@@ -203,6 +200,10 @@ final class OidcConfigService {
     }
 
     private String getJSON(ModelNode deployment) {
+        return getJSON(deployment, false);
+    }
+
+    private String getJSON(ModelNode deployment, boolean convertToRealmConfiguration) {
         ModelNode json = new ModelNode();
         ModelNode realmOrProvider = null;
         boolean removeProvider = false;
@@ -220,22 +221,36 @@ final class OidcConfigService {
 
         // set realm/provider values first, some can be overridden by deployment values
         if (realmOrProvider != null) {
-            setJSONValues(json, realmOrProvider);
+            setJSONValues(json, realmOrProvider, Stream.of(ProviderAttributeDefinitions.ATTRIBUTES).map(AttributeDefinition::getName)::iterator);
         }
-        setJSONValues(json, deployment);
+        setJSONValues(json, deployment, Stream.concat(SecureDeploymentDefinition.ALL_ATTRIBUTES.stream().map(AttributeDefinition::getName), Stream.of(CREDENTIALS_JSON_NAME, REDIRECT_REWRITE_RULE_JSON_NAME))::iterator);
         if (removeProvider) {
             json.remove(ElytronOidcDescriptionConstants.PROVIDER);
+        }
+
+        if (convertToRealmConfiguration) {
+            String clientId = json.get(CLIENT_ID).asStringOrNull();
+            if (clientId != null) {
+                json.remove(CLIENT_ID);
+                json.get(RESOURCE).set(clientId);
+            }
+
+            String providerUrl = json.get(PROVIDER_URL).asStringOrNull();
+            if (providerUrl != null) {
+                String[] authServerUrlAndRealm = providerUrl.split(Oidc.SLASH + Oidc.KEYCLOAK_REALMS_PATH);
+                json.get(AUTH_SERVER_URL).set(authServerUrlAndRealm[0]);
+                json.get(REALM).set(authServerUrlAndRealm[1]);
+                json.remove(PROVIDER_URL);
+            }
         }
         return json.toJSONString(true);
     }
 
-    private void setJSONValues(ModelNode json, ModelNode values) {
+    private static void setJSONValues(ModelNode json, ModelNode values, Iterable<String> keys) {
         synchronized (values) {
-            for (Property prop : new ArrayList<>(values.asPropertyList())) {
-                String name = prop.getName();
-                ModelNode value = prop.getValue();
-                if (value.isDefined()) {
-                    json.get(name).set(value);
+            for (String key : keys) {
+                if (values.hasDefined(key)) {
+                    json.get(key).set(values.get(key));
                 }
             }
         }

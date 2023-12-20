@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<layer-spec xmlns="urn:jboss:galleon:layer-spec:1.0" name="jaxrs">
-    <dependencies>
-        <layer name="deployment-scanner" optional="true"/>
-        <layer name="ee-concurrency" optional="true"/>
-        <layer name="jaxrs-core"/>
-    </dependencies>
-</layer-spec>

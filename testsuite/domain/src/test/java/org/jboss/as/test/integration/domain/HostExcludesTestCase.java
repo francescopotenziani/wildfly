@@ -1,23 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2018, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 package org.jboss.as.test.integration.domain;
 
@@ -36,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -90,7 +72,7 @@ public class HostExcludesTestCase extends BuildConfigurationTestBase {
     private final boolean isFullDistribution = AssumeTestGroupUtil.isFullDistribution();
     private final boolean isPreviewGalleonPack = AssumeTestGroupUtil.isWildFlyPreview();
 
-    private static final String MAJOR = "28.";
+    private static final String MAJOR = "30.";
 
     /**
      * Maintains the list of expected extensions for each host-exclude name for previous releases.
@@ -204,33 +186,39 @@ public class HostExcludesTestCase extends BuildConfigurationTestBase {
                 "org.wildfly.extension.clustering.ejb",
                 "org.wildfly.extension.datasources-agroal"
         ), true),
-        // If an extension is added to this enum, also check if it is supplied only by wildfly-galleon-pack. If so, add it also
-        // to the internal mpExtensions Set defined on this class.
-        // Don't add here extensions supplied only by the wildfly-preview-feature-pack because we are not tracking different releases
-        // of wildfly preview. In such a case, add them to previewExtensions set defined below.
-        CURRENT(MAJOR, WILDFLY_27_0, Arrays.asList(
-            "org.wildfly.extension.micrometer",
-            "org.wildfly.extension.microprofile.lra-coordinator",
-            "org.wildfly.extension.microprofile.lra-participant",
-            "org.wildfly.extension.microprofile.telemetry"
-        ), getCurrentRemovedExtensions(), true);
+        WILDFLY_28_0("WildFly28.0", WILDFLY_27_0, Arrays.asList(
+                "org.wildfly.extension.micrometer",
+                "org.wildfly.extension.microprofile.lra-coordinator",
+                "org.wildfly.extension.microprofile.lra-participant",
+                "org.wildfly.extension.microprofile.telemetry"
+        ), true),
+        WILDFLY_29_0("WildFly29.0", WILDFLY_28_0, List.of(), List.of(
+                "org.jboss.as.jacorb",
+                "org.jboss.as.messaging",
+                "org.jboss.as.web"
+                ), true),
+        CURRENT(MAJOR, WILDFLY_29_0, getCurrentAddedExtensions(), getCurrentRemovedExtensions(), true);
 
+        private static List<String> getCurrentAddedExtensions() {
+            // If an extension is added to this list, also check if it is supplied only by wildfly-galleon-pack. If so, add it also
+            // to the internal mpExtensions Set defined on this class.
+            // Don't add here extensions supplied only by the wildfly-preview-feature-pack because we are not tracking different releases
+            // of wildfly preview. In such a case, add them to previewExtensions set defined below.
+            return List.of();
+        }
         private static List<String> getCurrentRemovedExtensions() {
             // TODO If we decide to remove these modules from WFP, uncomment this.
             // See https://issues.redhat.com/browse/WFLY-16686
             /*
             if (AssumeTestGroupUtil.isWildFlyPreview()) {
                 return Arrays.asList(
-                        "org.jboss.as.messaging",
-                        "org.jboss.as.jacorb",
                         "org.jboss.as.jsr77",
-                        "org.jboss.as.web",
                         "org.wildfly.extension.picketlink",
                         "org.jboss.as.security"
                         );
             }
             */
-            return Collections.emptyList();
+            return List.of();
         }
 
         private final String name;

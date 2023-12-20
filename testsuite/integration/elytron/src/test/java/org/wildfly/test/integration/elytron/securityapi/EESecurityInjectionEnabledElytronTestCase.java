@@ -1,17 +1,6 @@
 /*
- * Copyright 2023 Red Hat, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 package org.wildfly.test.integration.elytron.securityapi;
 
@@ -104,18 +93,12 @@ public class EESecurityInjectionEnabledElytronTestCase extends EESecurityInjecti
 
         @Override
         protected ConfigurableElement[] getConfigurableElements() {
-            ConfigurableElement[] elements =  new ConfigurableElement[7];
+            ConfigurableElement[] elements =  new ConfigurableElement[6];
             // Add module with custom principal and principal transformer
             elements[0] = module;
 
-            // Add empty JACC policy
-            elements[1] = Policy.builder()
-                    .withName("jacc")
-                    .withJaccPolicy()
-                    .build();
-
             // Create filesystem security realm with one identity
-            elements[2] = FileSystemRealm.builder()
+            elements[1] = FileSystemRealm.builder()
                     .withName(TEST_REALM)
                     .withUser(UserWithAttributeValues.builder()
                             .withName("user1")
@@ -125,14 +108,14 @@ public class EESecurityInjectionEnabledElytronTestCase extends EESecurityInjecti
                     .build();
 
             // Add custom pre-realm principal transformer to create custom principal
-            elements[3] = CustomPrincipalTransformer.builder()
+            elements[2] = CustomPrincipalTransformer.builder()
                     .withName(TEST_CUSTOM_PRINCIPAL_TRANSFORMER)
                     .withModule(MODULE_NAME)
                     .withClassName(TestCustomPrincipalTransformer.class.getCanonicalName())
                     .build();
 
             // Create security domain using security realm and principal transformer
-            elements[4] = SimpleSecurityDomain.builder()
+            elements[3] = SimpleSecurityDomain.builder()
                     .withName(TEST_SECURITY_DOMAIN)
                     .withRealms(SimpleSecurityDomain.SecurityDomainRealm.builder()
                             .withRealm(TEST_REALM)
@@ -142,7 +125,7 @@ public class EESecurityInjectionEnabledElytronTestCase extends EESecurityInjecti
                     .build();
 
             // Create HTTP authentication factory
-            elements[5] = SimpleHttpAuthenticationFactory.builder()
+            elements[4] = SimpleHttpAuthenticationFactory.builder()
                     .withName(TEST_HTTP_FACTORY)
                     .withHttpServerMechanismFactory("global")
                     .withSecurityDomain(TEST_SECURITY_DOMAIN)
@@ -156,7 +139,7 @@ public class EESecurityInjectionEnabledElytronTestCase extends EESecurityInjecti
                     .build();
 
             // Add HTTP authentication factory to Undertow configuration
-            elements[6] = UndertowApplicationSecurityDomain.builder()
+            elements[5] = UndertowApplicationSecurityDomain.builder()
                     .withName(TEST_APP_DOMAIN)
                     .httpAuthenticationFactory(TEST_HTTP_FACTORY)
                     .withEnableJacc(true)

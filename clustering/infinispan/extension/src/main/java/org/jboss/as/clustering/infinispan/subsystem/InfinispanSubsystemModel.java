@@ -1,23 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2014, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 package org.jboss.as.clustering.infinispan.subsystem;
 
@@ -51,9 +34,11 @@ public enum InfinispanSubsystemModel implements SubsystemModel {
     VERSION_14_0_0(14, 0, 0), // WildFly 23, EAP 7.4
     VERSION_15_0_0(15, 0, 0), // WildFly 24-26
     VERSION_16_0_0(16, 0, 0), // WildFly 27
-    VERSION_17_0_0(17, 0, 0), // WildFly 28-present
+    VERSION_17_0_0(17, 0, 0), // WildFly 28-29
+    VERSION_17_1_0(17, 1, 0), // EAP 8.0
+    VERSION_18_0_0(18, 0, 0), // WildFly 30-present
     ;
-    static final InfinispanSubsystemModel CURRENT = VERSION_17_0_0;
+    static final InfinispanSubsystemModel CURRENT = VERSION_18_0_0;
 
     private final ModelVersion version;
 

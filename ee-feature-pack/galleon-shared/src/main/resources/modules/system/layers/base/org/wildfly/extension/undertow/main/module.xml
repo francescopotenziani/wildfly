@@ -1,25 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2010, Red Hat, Inc., and individual contributors
-  ~ as indicated by the @author tags. See the copyright.txt file in the
-  ~ distribution for a full listing of individual contributors.
-  ~
-  ~ This is free software; you can redistribute it and/or modify it
-  ~ under the terms of the GNU Lesser General Public License as
-  ~ published by the Free Software Foundation; either version 2.1 of
-  ~ the License, or (at your option) any later version.
-  ~
-  ~ This software is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  ~ Lesser General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU Lesser General Public
-  ~ License along with this software; if not, write to the Free
-  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~ Copyright The WildFly Authors
+  ~ SPDX-License-Identifier: Apache-2.0
   -->
 
 <module xmlns="urn:jboss:module:1.9" name="org.wildfly.extension.undertow">
@@ -36,21 +19,23 @@
     </resources>
 
     <dependencies>
-        <module name="java.desktop"/>
-        <module name="java.logging"/>
-        <module name="java.naming"/>
-        <module name="java.xml"/>
         <module name="io.undertow.core" services="import"/>
         <module name="io.undertow.servlet" services="import"/>
         <module name="io.undertow.jsp"/>
         <module name="io.undertow.websocket"/>
-        <module name="sun.jdk"/>
-        <module name="javax.annotation.api"/>
-        <module name="javax.security.auth.message.api"/>
-        <module name="javax.servlet.api"/>
-        <module name="javax.servlet.jsp.api"/>
-        <module name="javax.websocket.api"/>
-        <module name="org.jboss.jandex"/>
+        <module name="java.desktop"/>
+        <module name="java.logging"/>
+        <module name="java.naming"/>
+        <module name="java.xml"/>
+        <module name="jakarta.annotation.api"/>
+        <!-- Only needed if using access logging -->
+        <module name="jakarta.json.api" optional="true"/>
+        <module name="jakarta.security.auth.message.api"/>
+        <module name="jakarta.security.jacc.api"/>
+        <module name="jakarta.servlet.api"/>
+        <module name="jakarta.servlet.jsp.api"/>
+        <module name="jakarta.websocket.api"/>
+        <module name="io.smallrye.jandex"/>
         <module name="org.jboss.staxmapper"/>
         <module name="org.jboss.as.clustering.common"/>
         <module name="org.wildfly.clustering.service"/>
@@ -84,13 +69,11 @@
         <module name="org.jboss.vfs"/>
         <module name="org.jboss.as.version"/>
         <module name="org.jboss.logging"/>
-        <module name="javax.security.jacc.api"/>
         <module name="org.jboss.xnio"/>
         <module name="org.jboss.xnio.nio" services="import"/>
         <module name="org.wildfly.http-client.common"/>
-        <!-- Only needed if using access logging -->
-        <module name="javax.json.api" optional="true"/>
         <module name="org.wildfly.event.logger" optional="true"/>
         <module name="org.wildfly.common" optional="true"/>
     </dependencies>
+
 </module>

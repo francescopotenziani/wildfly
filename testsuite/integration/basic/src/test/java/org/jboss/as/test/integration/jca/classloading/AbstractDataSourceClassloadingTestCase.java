@@ -1,3 +1,8 @@
+/*
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package org.jboss.as.test.integration.jca.classloading;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -102,9 +107,8 @@ public abstract class AbstractDataSourceClassloadingTestCase {
                         "\n" +
                         "    <dependencies>\n" +
                         "        <module name=\"java.sql\"/>\n" +
-                        "        <module name=\"sun.jdk\"/>\n" +
-                        "        <module name=\"javax.orb.api\"/>\n" +
                         "        <module name=\"java.logging\"/>\n" +
+                        "        <module name=\"javax.orb.api\"/>\n" +
                         "    </dependencies>\n" +
                         "</module>");
             }

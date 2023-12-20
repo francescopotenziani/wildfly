@@ -1,23 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2012, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package org.jboss.as.connector.subsystems.datasources;
@@ -25,8 +8,6 @@ package org.jboss.as.connector.subsystems.datasources;
 import java.util.Map;
 
 import org.jboss.as.connector.logging.ConnectorLogger;
-import org.jboss.as.connector.metadata.api.common.Credential;
-import org.jboss.as.connector.metadata.api.ds.DsSecurity;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
@@ -240,32 +221,9 @@ public class XMLXaDataSourceRuntimeHandler extends AbstractXMLDataSourceRuntimeH
         } else if (attributeName.equals(Constants.RECOVERY_PASSWORD.getName())) {
             //don't display the password
         } else if (attributeName.equals(Constants.RECOVERY_SECURITY_DOMAIN.getName())) {
-            if(dataSource.getRecovery() == null) {
-                return;
-            }
-            if(dataSource.getRecovery().getCredential() == null) {
-                return;
-            }
-            // safe assertion because all parsers create jboss Credential
-            assert dataSource.getRecovery().getCredential() instanceof Credential;
-            if (((Credential) dataSource.getRecovery().getCredential()).isElytronEnabled()) {
-                return;
-            }
-            setStringIfNotNull(context, dataSource.getRecovery().getCredential().getSecurityDomain());
-
+            // no longer supported
         } else if (attributeName.equals(Constants.RECOVERY_ELYTRON_ENABLED.getName())) {
-            if(dataSource.getRecovery() == null) {
-                return;
-            }
-            if(dataSource.getRecovery().getCredential() == null) {
-                return;
-            }
-            // safe assertion because all parsers create jboss Credential
-            assert dataSource.getRecovery().getCredential() instanceof Credential;
-            if (!((Credential) dataSource.getRecovery().getCredential()).isElytronEnabled()) {
-                return;
-            }
-            setBooleanIfNotNull(context, ((Credential) dataSource.getRecovery().getCredential()).isElytronEnabled());
+            setBooleanIfNotNull(context, true);
         } else if (attributeName.equals(Constants.RECOVERY_CREDENTIAL_REFERENCE.getName())) {
             //don't give out the credential-reference
         } else if (attributeName.equals(Constants.RECOVERY_AUTHENTICATION_CONTEXT.getName())) {
@@ -273,11 +231,6 @@ public class XMLXaDataSourceRuntimeHandler extends AbstractXMLDataSourceRuntimeH
                 return;
             }
             if(dataSource.getRecovery().getCredential() == null) {
-                return;
-            }
-            // safe assertion because all parsers create jboss Credential
-            assert dataSource.getRecovery().getCredential() instanceof Credential;
-            if (!((Credential) dataSource.getRecovery().getCredential()).isElytronEnabled()) {
                 return;
             }
             setStringIfNotNull(context, dataSource.getRecovery().getCredential().getSecurityDomain());
@@ -447,31 +400,13 @@ public class XMLXaDataSourceRuntimeHandler extends AbstractXMLDataSourceRuntimeH
             if (dataSource.getSecurity() == null) {
                 return;
             }
-            // this is a safe assert because DsXmlParser will always create a wildfly DsSecurity metadata
-            assert dataSource.getSecurity() instanceof DsSecurity;
-            if (((DsSecurity) dataSource.getSecurity()).isElytronEnabled()) {
+            if (dataSource.getSecurity().getSecurityDomain() == null) {
                 return;
             }
-            setStringIfNotNull(context, dataSource.getSecurity().getSecurityDomain());
+            throw new IllegalStateException(ConnectorLogger.ROOT_LOGGER.legacySecurityNotSupported());
         } else if (attributeName.equals(Constants.ELYTRON_ENABLED.getName())) {
-            if (dataSource.getSecurity() == null) {
-                return;
-            }
-            // this is a safe assert because DsXmlParser will always create a wildfly DsSecurity metadata
-            assert dataSource.getSecurity() instanceof DsSecurity;
-            if (!((DsSecurity) dataSource.getSecurity()).isElytronEnabled()) {
-                return;
-            }
-            setBooleanIfNotNull(context, ((DsSecurity) dataSource.getSecurity()).isElytronEnabled());
+            setBooleanIfNotNull(context, true);
         } else if (attributeName.equals(Constants.AUTHENTICATION_CONTEXT.getName())) {
-            if (dataSource.getSecurity() == null) {
-                return;
-            }
-            // this is a safe assert because DsXmlParser will always create a wildfly DsSecurity metadata
-            assert dataSource.getSecurity() instanceof DsSecurity;
-            if (!((DsSecurity) dataSource.getSecurity()).isElytronEnabled()) {
-                return;
-            }
             setStringIfNotNull(context, dataSource.getSecurity().getSecurityDomain());
         } else if (attributeName.equals(Constants.REAUTH_PLUGIN_CLASSNAME.getName())) {
             if (dataSource.getSecurity() == null) {
