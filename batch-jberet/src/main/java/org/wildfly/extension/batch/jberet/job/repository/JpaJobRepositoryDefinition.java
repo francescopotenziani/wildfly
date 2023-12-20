@@ -82,7 +82,7 @@ public class JpaJobRepositoryDefinition extends SimpleResourceDefinition {
     private static class JpaRepositoryAddHandler extends AbstractAddStepHandler {
 
         JpaRepositoryAddHandler() {
-            super(Capabilities.JOB_REPOSITORY_CAPABILITY, DATA_SOURCE);
+            super(DATA_SOURCE);
         }
 
         @Override
